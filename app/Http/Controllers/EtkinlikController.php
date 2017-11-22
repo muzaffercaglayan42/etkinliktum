@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Etkinlik;
 use App\User;
+use App\Dersler;
 use App\Etkinlikler;
 use App\KulturelEtkinlikTakip;
 use Auth; 
@@ -72,28 +73,33 @@ class EtkinlikController extends Controller
             return view('etkinlikislem',compact("etkinlik","status"));
         }
     }
-    function DersIndex()
+    function EtkinlikDersIndex()
     {
+        $dersler=Dersler::where('durum', 1)->get();
+       /// echo "<pre>"; print_r($dersler); exit();
         if (Auth::user()->tip==3) 
-    {
-        return view('ders');
-    } else return redirect('/etkinlikdurumlistele');
+        {
+            ///return view('etknders');
+             return view('etknders',compact("dersler"));
+        } else return redirect('/etkinlikdurumlistele');
     }
-    function DersListe(Request $request) 
+    function EtkinlikDersListe(Request $request) 
     {   if ($request->search!='') {
         $ders= Etkinlikler::where('ders_mi','!=','0')->whereRaw("ad ILIKE '%".$request->search."%' or yer ILIKE '%".$request->search."%'")->orderBy('id', 'asc')->paginate(5);
-       return view('dersislem',compact("ders"));
-    }else return view('dersislem', [
+       return view('etkndersislem',compact("ders"));
+    }else return view('etkndersislem', [
             'ders' => Etkinlikler::where('ders_mi','!=','0')->orderBy('id', 'asc')->paginate(5)
         ]);
     }
-    function DersEkle(Request $request) 
-    {//return$request->ilktarih;
+    function EtkinlikDersEkle(Request $request) 
+    {//return $request->ilktarih;
+        $dersler=Dersler::where('durum', 1)->where('id',$request->ad)->first();
         $baslangicZamani = strtotime( $request->ilktarih );
         $bitisZamani = strtotime( $request->sontarih );
         for ( $i = $baslangicZamani; $i <= $bitisZamani; $i = $i + 86400*7 ) {
             $ders = new Etkinlikler;
-            $ders->ad = $request->ad;
+            $ders->ders_mi=$request->ad; 
+            $ders->ad = $dersler->ders_adi;
             $ders->yer = $request->yer;
             $ders->tarih = date( 'Y-m-d', $i );
             $ders->baslama = $request->baslama;
@@ -101,14 +107,14 @@ class EtkinlikController extends Controller
             $ders->etkinlikte_ne_kadar_kalinmali = $request->etkinlikte_ne_kadar_kalinmali;
             $ders->etkinlik_oncesi_okutma_suresi = $request->etkinlik_oncesi_okutma_suresi;
             $ders->etkinlik_sonrasi_okutma_suresi = $request->etkinlik_sonrasi_okutma_suresi;
-            $ders->ders_mi=$request->sube;
+           // $ders->ders_mi=$request->sube;
             $ders->save();
         } 
         
-        return redirect('/dersekle');
+        return redirect('/etkinlikdersekle');
     }
 
-    function DersDuzelt($id, Request $request)
+    function EtkinlikDersDuzelt($id, Request $request)
     {
         $ders=Etkinlikler::findOrFail($id);
         //echo "<pre>"; print_r($request->ad); exit();
@@ -120,12 +126,12 @@ class EtkinlikController extends Controller
         $ders->etkinlikte_ne_kadar_kalinmali = $request->etkinlikte_ne_kadar_kalinmali;
         $ders->ders_mi=$request->sube;
         $ders->save();
-        return redirect('/derslistele');
+        return redirect('/etkinlikderslistele');
     }
-    function DersSil($id)
+    function EtkinlikDersSil($id)
     {
         Etkinlikler::findOrFail($id)->delete();
-        return redirect('/derslistele');
+        return redirect('/etkinlikderslistele');
     }
     function UserIndex()
     {
@@ -147,7 +153,6 @@ class EtkinlikController extends Controller
         $user->save();
         return redirect('/userekle');
     }
-
     function UserSil($id)
     {
         User::findOrFail($id)->delete();
@@ -161,23 +166,73 @@ class EtkinlikController extends Controller
         $user->kartno = $request->kartno;
         $user->email = $request->email;
         $user->tip = $request->tip;
-        $user->sube = $request->sube;
         $user->save();
         return redirect('/userlistele');
     }
-
     function UserListe(Request $request) 
     {   if ($request->search!='') {
-        $users= User::whereRaw("adsoyad ILIKE '%".$request->search."%' ")->orderBy('created_at', 'asc')->paginate(5);
+        $users= User::whereRaw("adsoyad ILIKE '%".$request->search."%' ")->where('tip','!=','1')->orderBy('created_at', 'asc')->paginate(5);
+//echo "<pre>"; print_r($etkinlik); exit();
+//whereRaw("ilisik_kesme.sicil_ogr_no ILIKE '%".$request->string."%' or ilisik_kesme.tc ILIKE '%".$request->string."%'".$filter1.$filter);
+       return view('userislem',compact("users"));
+    }else  return view('userislem', [
+            'users' => User::orderBy('created_at', 'asc')->where('tip','!=','1')->paginate(5)
+        ]);
+    }
+    function OgrenciIndex()
+    {
+        if (Auth::user()->tip==3) 
+    {
+        return view('ogrenci');
+    } else return redirect('/etkinlikdurumlistele');
+    }
+    function OgrenciEkle(Request $request) 
+    {
+      //  echo Auth::user()->name; 
+        $user = new User;
+        $user->adsoyad = $request->adsoyad;
+        $user->kartno = $request->kartno;
+        $user->email = $request->email;
+        $user->password = bcrypt($request->password);
+        $user->tip = 1;
+        $user->sinif = $request->sinif;
+        $user->sube = $request->sube;
+        $user->save();
+        return redirect('/ogrenciekle');
+    }
+
+    function OgrenciSil($id)
+    {
+        User::findOrFail($id)->delete();
+        return redirect('/ogrencilistele');
+    }
+    function OgrenciDuzelt($id, Request $request)
+    {
+        $user=User::findOrFail($id);
+        //echo "<pre>"; print_r($request); exit();
+        $user->adsoyad = $request->adsoyad;
+        $user->kartno = $request->kartno;
+        $user->email = $request->email;
+        $user->tip = 1;
+        $user->sinif = $request->sinif;
+        $user->sube = $request->sube;
+        $user->save();
+        return redirect('/ogrencilistele');
+    }
+
+    function OgrenciListe(Request $request) 
+    {   if ($request->search!='') {
+        $users= User::whereRaw("adsoyad ILIKE '%".$request->search."%' ")->where('tip',1)->orderBy('created_at', 'asc')->paginate(5);
 //echo "<pre>"; print_r($etkinlik); exit();
 //whereRaw("ilisik_kesme.sicil_ogr_no ILIKE '%".$request->string."%' or ilisik_kesme.tc ILIKE '%".$request->string."%'".$filter1.$filter);
 
 
-       return view('userislem',compact("users"));
-    }else  return view('userislem', [
-            'users' => User::orderBy('created_at', 'asc')->paginate(5)
+       return view('ogrenciislem',compact("users"));
+    }else  return view('ogrenciislem', [
+            'users' => User::orderBy('created_at', 'asc')->where('tip',1)->paginate(5)
         ]);
     }
+
     public function etkinlikBilgi($kartno)
     {   date_default_timezone_set("Europe/Istanbul");
         $bugun= date('Y-m-d');
@@ -395,14 +450,14 @@ class EtkinlikController extends Controller
     function EtkinlikDurumListe(Request $request) 
     {   
         $ogrelmanimi=User::where('id',Auth::user()->id)->where('tip', 2)->first();
-        echo "<pre>"; print_r($ogrelmanimi); exit();
+        //echo "<pre>"; print_r($ogrelmanimi); exit();
         if (count($ogrelmanimi)>0) {
             $status="durumlist";
             $etkinlik= KulturelEtkinlikTakip::select('ogr_no','ogr_elemani','adsoyad', DB::raw('sum(sure) as sure'))->orWhere('ogr_elemani',Auth::user()->id)->groupBy('ogr_no','ogr_elemani','adsoyad')->orderBy('sure','DESC')->paginate(20);
             return view('etkinlikislem',compact("etkinlik","status","total","ogrelmanimi"));
         }
         elseif ($request->search!='') 
-        {$ogrelmanimi='';
+        {$ogrelmanimi='0';
             $status="durumlist";
             $etkinlik= KulturelEtkinlikTakip::where('ders_mi','=','0')->whereRaw("ad ILIKE '%".$request->search."%' or yer ILIKE '%".$request->search."%'")->orderBy('created_at', 'asc')->where('ogr_no',Auth::user()->id)->paginate(5);
            return view('etkinlikislem',compact("etkinlik","status","ogrelmanimi"));
@@ -410,9 +465,60 @@ class EtkinlikController extends Controller
         { 
             $total = DB::table('kulturel_etkinlik_takip')->where('ogr_no',Auth::user()->id)->sum('sure');
             $status="durumlist";
-            $ogrelmanimi='';
+            $ogrelmanimi='0';
             $etkinlik= KulturelEtkinlikTakip::orderBy('created_at', 'asc')->where('ogr_no',Auth::user()->id)->paginate(5);
             return view('etkinlikislem',compact("etkinlik","status","total","ogrelmanimi"));
         }
     }
+    function DersIndex()
+    {
+        if (Auth::user()->tip==3) 
+    {
+        $ogrelemani=User::where('tip', 2)->get();
+        //return $ogrelemani;
+        return view('ders',compact("ogrelemani"));
+    } else return redirect('/etkinlikdurumlistele');
+    }
+    function DersEkle(Request $request) 
+    {//return $request->ilktarih;
+            $ders = new Dersler;
+            $ders->ders_adi = $request->ad;
+            $ders->ders_sinif = $request->sinif;
+            $ders->ders_sube = $request->sube;
+            $ders->ogr_elemani = $request->ogr_elemani;
+            $ders->durum = 1;
+            
+            $ders->save();
+        return redirect('/dersekle');
+    }
+    function DersListe(Request $request) 
+
+    {   $ogrelemani=User::where('tip', 2)->get();
+        if ($request->search!='') {
+        $ders= Dersler::where('durum','=','1')->whereRaw("ders_adi ILIKE '%".$request->search."%'")->orderBy('id', 'asc')->paginate(5);
+       return view('dersislem',compact("ders","ogrelemani"));
+    }else { 
+        $ders = Dersler::where('durum','=','1')->orderBy('id', 'asc')->paginate(5);
+    return view('dersislem',compact("ogrelemani","ders"));
+    }
+    
+    
+    }
+    function DersDuzelt($id, Request $request)
+    {   
+        $ders=Dersler::findOrFail($id);
+        $ders->ders_adi = $request->ders_adi;
+        $ders->ders_sinif = $request->ders_sinif;
+        $ders->ders_sube = $request->ders_sube;
+        $ders->ogr_elemani = $request->ogr_elemani;
+        $ders->durum = 1;
+        $ders->save();
+        return redirect('/derslistele');
+    }
+    function DersSil($id)
+    {
+        Dersler::findOrFail($id)->delete();
+        return redirect('/derslistele');
+    }
+    
 }

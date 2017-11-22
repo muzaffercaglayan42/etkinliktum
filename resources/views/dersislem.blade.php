@@ -1,4 +1,4 @@
-
+<?php Use App\Etkinlikler;?>
 
 @section('content')
 @extends('layouts.app')
@@ -22,23 +22,17 @@
                             <table class="table table-striped drs-table">
                                 <thead>
                                     <th>Ders Adı</th>
-                                    <th>Ders Yeri</th>
-                                    <th>Ders Tarihi</th>
-                                    <th>Başlama Saati</th>
-                                    <th>Bitiş Saati</th>
-                                    <th>Minimum Süre</th>
-                                    <th>&nbsp;</th>
+                                    <th>Ders Sınıfı</th>
+                                    <th>Ders Şubesi</th>
+                                    <th>Ders Öğretim Görevlisi</th>
                                 </thead>
                                 <tbody>
                                     @foreach ($ders as $drs)
                                         <tr>
-                                            <td class="table-text"><div>{{ $drs->ad }}</div></td>
-                                            <td class="table-text"><div>{{ $drs->yer }}</div></td>
-                                            <td class="table-text"><div>{{ $drs->tarih }}</div></td>
-                                            <td class="table-text"><div>{{ $drs->baslama }}</div></td>
-                                            <td class="table-text"><div>{{ $drs->bitis }}</div></td>
-                                            <td class="table-text"><div>{{ $drs->etkinlikte_ne_kadar_kalinmali }}</div></td>
-
+                                            <td class="table-text"><div>{{ $drs->ders_adi }}</div></td>
+                                            <td class="table-text"><div>{{ $drs->ders_sinif }}</div></td>
+                                            <td class="table-text"><div>{{ $drs->ders_sube }}</div></td>
+                                            <td class="table-text"><div>{{Etkinlikler::PersonelBilgi($drs->ogr_elemani)}}</div></td>
                                             <!-- Düzelt -->
                                             <td>
                                                 <form action="{{ url('drs/duzelt/'.$drs->id) }}" method="POST">
@@ -85,42 +79,39 @@
                                                         {{ csrf_field() }}
                                                         <!-- drs adı -->
                                                         <div class="form-group">
-                                                            <label for="drs-ad" class="col-sm-3 control-label">Ders Adı</label>
-                                                                <input type="text" name="ad" id="drs-ad" class="form-control" value="@if(count(@$drs)>0){{$drs->ad}}@else{{old('ad')}}@endif">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="drs-yer" class="col-sm-3 control-label">Ders Yeri</label>
-                                                                <input type="text" name="yer" id="drs-yer" class="form-control" value="@if(count(@$drs)>0){{$drs->yer}}@else{{old('yer')}}@endif">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="drs-tarih" class="col-sm-3 control-label">İlk Ders Tarih</label>
-                                                                <input type="text" name="tarih" id="drs-tarih" class="form-control" value="@if(count(@$drs)>0){{$drs->tarih}}@else{{old('tarih')}}@endif">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="drs-tarih" class="col-sm-3 control-label">Son Ders Tarihi</label>
-                                                                <input type="text" name="tarih" id="drs-tarih" class="form-control" value="@if(count(@$drs)>0){{$drs->tarih}}@else{{old('tarih')}}@endif">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="drs-baslama" class="col-sm-3 control-label">Başlama Saati</label>
-                                                                <input type="text" name="baslama" id="drs-baslama" class="form-control" value="@if(count(@$drs)>0){{$drs->baslama}}@else{{old('baslama')}}@endif">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="drs-bitis" class="col-sm-3 control-label">Bitiş Saati</label>
-                                                                <input type="text" name="bitis" id="drs-bitis" class="form-control" value="@if(count(@$drs)>0){{$drs->bitis}}@else{{old('bitis')}}@endif">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="drs-etkinlikte_ne_kadar_kalinmali" class="col-sm-3 control-label">Minimum Süre</label>
-                                                                <input type="text" name="etkinlikte_ne_kadar_kalinmali" id="drs-etkinlikte_ne_kadar_kalinmali" class="form-control" value="@if(count(@$drs)>0){{$drs->etkinlikte_ne_kadar_kalinmali}}@else{{old('etkinlikte_ne_kadar_kalinmali')}}@endif">
+                                                            <label for="drs-ders_adi" class="col-sm-3 control-label">Ders Adı</label>
+                                                                <input type="text" name="ders_adi" id="drs-ders_adi" class="form-control" value="@if(count(@$drs)>0){{$drs->ders_adi}}@else{{old('ders_adi')}}@endif">
                                                         </div>
                                                         <div class="form-group">
                                                         <label for="email" class="col-md-4 control-label">Sınıf</label>
-                                                            <select class="form-control" id="sel1" name="sube" value="{{ old('sube') }}">
-                                                            <option value="1">1</option>
-                                                            <option value="2">2</option>
-                                                            <option value="3">3</option>
-                                                            <option value="4">4</option>
+                                                            <select class="form-control" id="sel1" name="ders_sinif" value="{{ old('ders_sinif') }}">
+                                                            <option value="1" <?php if ($drs->ders_sinif=='1') echo "selected"?>>1</option>
+                                                            <option value="2" <?php if ($drs->ders_sinif=='2') echo "selected"?>>2</option>
+                                                            <option value="3" <?php if ($drs->ders_sinif=='3') echo "selected"?>>3</option>
+                                                            <option value="4" <?php if ($drs->ders_sinif=='4') echo "selected"?>>4</option>
                                                             </select>
                                                         </div>
+                                                        <div class="form-group">
+                                                        <label for="email" class="col-md-4 control-label">Şube</label>
+                                                            <select class="form-control" id="sel1" name="ders_sube" value="{{ old('ders_sube') }}">
+                                                            <option value="A" <?php if ($drs->ders_sube=='A') echo "selected"?>>A</option>
+                                                            <option value="B" <?php if ($drs->ders_sube=='B') echo "selected"?>>B</option>
+                                                            <option value="C" <?php if ($drs->ders_sube=='C') echo "selected"?>>C</option>
+                                                            <option value="D" <?php if ($drs->ders_sube=='D') echo "selected"?>>D</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="drs-ogr_elemani" class="col-sm-4 control-label">Ders Öğretim Elemanı</label>
+                                                                 <select class="selectpicker form-control"  data-live-search="true" name="ogr_elemani" data-container="body">
+									                     @foreach(@$ogrelemani as $person)                        	
+									                              <option value="{{ $person->id }}" <?php if ($drs->ogr_elemani==$person->id) echo "selected"?>>{{$person->adsoyad}}</option>
+									                        @endforeach
+									                        
+								                    	</select>
+                                                        </div>
+
+                                                       
+                                                       
                                                         <!-- ekle Button -->
                                                         <div class="modal-footer">
                                                             <div class="col-sm-offset-3 col-sm-6">

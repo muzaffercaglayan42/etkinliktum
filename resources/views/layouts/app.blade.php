@@ -35,6 +35,7 @@
                     Kültürel Etkinlik Takip
                 </a>
             </div>
+
             <div class="collapse navbar-collapse" id="app-navbar-collapse">
                 <!-- Left Side Of Navbar -->
                 <ul class="nav navbar-nav">
@@ -70,61 +71,123 @@
     <div class="col-md-2">
             <div class="profile-sidebar">
                 <!-- SIDEBAR MENU -->
-                <div class="profile-usermenu">
+
+<div class="row affix-row">
+    <div class="col-sm-4 col-md-4 affix-sidebar">
+
+    <div class="navbar-collapse collapse sidebar-navbar-collapse">
+      <ul class="nav" id="sidenav01" style="width: 170px;">
+      <li class="active">
+                <a href="#">
+                <i class="glyphicon glyphicon-home"></i>
+                Anasayfa </a>
+            </li>
+            <?php if (Auth::user()->tip==3) {
+                         ?>
+        <li >
+          <a href="#" data-toggle="collapse" data-target="#toggleDemo" data-parent="#sidenav01" class="collapsed">
+          <span class="glyphicon glyphicon-user"></span> Kullanıcı İşlemleri <span class="caret pull-right"></span>
+          </a>
+          <div class="collapse" id="toggleDemo" style="height: 0px;">
+            <ul class="nav nav-list" style=" text-indent: 10px;">
+            
+            
+              <li>
+                <a href="{{ url('/userekle') }}">
+                <i class="glyphicon glyphicon-user"></i>
+                Personel Ekle </a>
+            </li>
+            <li>
+                <a href="{{ url('/userlistele') }}">
+                <i class="glyphicon glyphicon-list"></i>
+                Personel Listele </a>
+            </li>
+            <li>
+                <a href="{{ url('/ogrenciekle') }}">
+                <i class="glyphicon glyphicon-user"></i>
+                Öğrenci Ekle </a>
+            </li>
+            <li>
+                <a href="{{ url('/ogrencilistele') }}">
+                <i class="glyphicon glyphicon-list"></i>
+                Öğrenci Listele </a>
+            </li>
+            </ul>
+          </div>
+        </li>
+        <li class="active">
+          <a href="#" data-toggle="collapse" data-target="#toggleDemo2" data-parent="#sidenav01" class="collapsed">
+          <span class="glyphicon glyphicon-list"></span> Etkinlik İşlemleri <span class="caret pull-right"></span>
+          </a>
+          <div class="collapse" id="toggleDemo2" style="height: 0px;">
+            <ul class="nav nav-list" style=" text-indent: 10px;">
+              <li>
+                <a href="{{ url('/etkinlikekle') }}">
+                <i class="glyphicon glyphicon-ok"></i>
+                Etkinlik Ekle </a>
+            </li>
+             <li>
+                <a href="{{ url('/etkinliklistele') }}">
+                <i class="glyphicon glyphicon-list"></i>
+                Etkinlik Listele </a>
+                <li>
+                <a href="{{ url('/etkinlikdersekle') }}">
+                <i class="glyphicon glyphicon-ok"></i>
+                Ders Ekle </a>
+            </li>
+             <li>
+                <a href="{{ url('/etkinlikderslistele') }}">
+                <i class="glyphicon glyphicon-list"></i>
+                Ders Listele </a>
+            </li>
+            </li>
+            </ul>
+          </div>
+        </li>
+        <li class="active">
+          <a href="#" data-toggle="collapse" data-target="#toggleDemo3" data-parent="#sidenav01" class="collapsed">
+          <span class="glyphicon glyphicon-ok"></span> Ders İşlemleri <span class="caret pull-right"></span>
+          </a>
+          <div class="collapse" id="toggleDemo3" style="height: 0px;">
+            <ul class="nav nav-list" style=" text-indent: 10px;">
+              <li>
+                <a href="{{ url('/dersekle') }}">
+                <i class="glyphicon glyphicon-ok"></i>
+                Ders Ekle </a>
+            </li>
+             <li>
+                <a href="{{ url('/derslistele') }}">
+                <i class="glyphicon glyphicon-list"></i>
+                Ders Listele </a>
+            </li>
+            </ul>
+          </div>
+        </li>
+        <?php } ?> 
+       <?php if (Auth::user()->tip!=3) {
+         
+         ?>
+        <li>
+             <a href="{{ url('/etkinlikdurumlistele') }}">
+            <i class="glyphicon glyphicon-flag"></i>
+            Etkinlik Durum </a>
+        </li>
+         <?php } ?>
+      </ul>
+      </div><!--/.nav-collapse -->
+    </div>
+</div>
+
                     <ul class="nav">
-                        <li class="active">
-                            <a href="#">
-                            <i class="glyphicon glyphicon-home"></i>
-                            Anasayfa </a>
-                        </li>
                         
-                        <?php if (Auth::user()->tip==3) {
-                         
-                         ?>
-                        <li>
-                            <a href="{{ url('/userekle') }}">
-                            <i class="glyphicon glyphicon-user"></i>
-                            Kullanıcı Ekle </a>
-                        </li>
-                        <li>
-                            <a href="{{ url('/userlistele') }}">
-                            <i class="glyphicon glyphicon-list"></i>
-                            Kullanıcı Listele </a>
-                        </li>
-                        <li>
-                            <a href="{{ url('/etkinlikekle') }}">
-                            <i class="glyphicon glyphicon-ok"></i>
-                            Etkinlik Ekle </a>
-                        </li>
-                         <li>
-                            <a href="{{ url('/etkinliklistele') }}">
-                            <i class="glyphicon glyphicon-list"></i>
-                            Etkinlik Listele </a>
-
-                        </li>
-                        <li>
-                            <a href="{{ url('/dersekle') }}">
-                            <i class="glyphicon glyphicon-ok"></i>
-                            Ders Ekle </a>
-                        </li>
-                         <li>
-                            <a href="{{ url('/derslistele') }}">
-                            <i class="glyphicon glyphicon-list"></i>
-                            Ders Listele </a>
-
-                        </li>
-                       <?php } ?> 
-                       <?php if (Auth::user()->tip!=3) {
-                         
-                         ?>
-                        <li>
-                             <a href="{{ url('/etkinlikdurumlistele') }}">
-                            <i class="glyphicon glyphicon-flag"></i>
-                            Etkinlik Durum </a>
-                        </li>
-                         <?php } ?>
+                        
+                        
+                        
+                        
+                        
+                       
                     </ul>
-                </div>
+               
                 <!-- END MENU -->
             </div>
         </div>

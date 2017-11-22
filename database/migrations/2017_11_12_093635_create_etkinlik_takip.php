@@ -17,8 +17,8 @@ class CreateEtkinlikTakip extends Migration
         $table->string('ogr_no');
         $table->string('kart_no');
         $table->string('adsoyad');
-        $table->string('birim')->nullable();
-        $table->string('bolum')->nullable();
+        $table->string('ders_mi')->nullable()->default(0);
+        $table->string('sinif')->nullable();
         $table->string('sube')->nullable();
         $table->integer('etkinlik_id');
         $table->string('etkinlik_adi');

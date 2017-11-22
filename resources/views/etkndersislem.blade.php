@@ -1,12 +1,14 @@
+
+
 @section('content')
 @extends('layouts.app')
             <!-- Liste -->
             <div class="col-md-10">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        Kullanıcılar
+                        Dersler
                          <div class="pull-right">    
-                            <form class="navbar-form navbar-left"  action="{{ url('/userlistele')}}" method="POST"  role="search">
+                            <form class="navbar-form navbar-left"  action="{{ url('/etkinlikderslistele')}}" method="POST"  role="search">
                              {{ csrf_field() }}
                                 <div class="form-group">
                                     <input type="text" class="form-control" name="search" placeholder="Ara">
@@ -15,53 +17,58 @@
                             </form>
                         </div>
                     </div>
-                        @if (count($users) > 0)
+                        @if (count($ders) > 0)
                         <div class="panel-body">
-                            <table class="table table-striped usr-table">
+                            <table class="table table-striped drs-table">
                                 <thead>
-                                    <th>Ad/Soyad</th>
-                                    <th>Kart No</th>
-                                    <th>E-Mail</th>
-                                    <th>Kullanıcı Tipi</th>
+                                    <th>Ders Adı</th>
+                                    <th>Ders Yeri</th>
+                                    <th>Ders Tarihi</th>
+                                    <th>Başlama Saati</th>
+                                    <th>Bitiş Saati</th>
+                                    <th>Minimum Süre</th>
                                     <th>&nbsp;</th>
                                 </thead>
                                 <tbody>
-                                    @foreach ($users as $usr)
+                                    @foreach ($ders as $drs)
                                         <tr>
-                                            <td class="table-text"><div>{{ $usr->adsoyad }}</div></td>
-                                            <td class="table-text"><div>{{ $usr->kartno }}</div></td>
-                                            <td class="table-text"><div>{{ $usr->email }}</div></td>
-                                            <td class="table-text">@if($usr->tip==1)<div>  Öğrenci</div>  @elseif($usr->tip==2)<div>  Akademik Personel</div>  @elseif($usr->tip==3)<div>İdari Personel</div> @endif</td>
+                                            <td class="table-text"><div>{{ $drs->ad }}</div></td>
+                                            <td class="table-text"><div>{{ $drs->yer }}</div></td>
+                                            <td class="table-text"><div>{{ $drs->tarih }}</div></td>
+                                            <td class="table-text"><div>{{ $drs->baslama }}</div></td>
+                                            <td class="table-text"><div>{{ $drs->bitis }}</div></td>
+                                            <td class="table-text"><div>{{ $drs->etkinlikte_ne_kadar_kalinmali }}</div></td>
+
                                             <!-- Düzelt -->
                                             <td>
-                                                <form action="{{ url('usr/duzelt/'.$usr->id) }}" method="POST">
+                                                <form action="{{ url('etkndrs/duzelt/'.$drs->id) }}" method="POST">
                                                     {{ csrf_field() }}
                                                     <button 
                                                        type="button" 
                                                        class="btn btn-primary pull-right" 
                                                        data-toggle="modal"
-                                                       data-target="#duzeltModal{{$usr->id}}">
+                                                       data-target="#duzeltModal{{$drs->id}}">
                                                       <i class="fa fa-btn fa-edit " ></i>Düzelt
                                                  </button>
                                                 </form>
                                             </td>
                                             <!-- Sil -->
                                              <td>
-                                                <form action="{{ url('usr/sil/'.$usr->id) }}" method="POST">
+                                                <form action="{{ url('etkndrs/sil/'.$drs->id) }}" method="POST">
                                                     {{ csrf_field() }}
                                                     <input type="hidden" name="_method" value="DELETE">
                                                     <button 
                                                        type="button" 
                                                        class="btn btn btn-danger pull-right" 
                                                        data-toggle="modal"
-                                                       data-target="#silModal{{$usr->id}}">
+                                                       data-target="#silModal{{$drs->id}}">
                                                       <i class="fa fa-btn fa-trash pull-right " ></i>Sil
                                                  </button>
                                                 </form>
                                             </td>
                                             <!-- Düzelt Modal -->
                                         </tr>
-                                    <div class="modal fade" id="duzeltModal{{$usr->id}}" 
+                                    <div class="modal fade" id="duzeltModal{{$drs->id}}" 
                                          tabindex="-1" role="dialog" 
                                          aria-labelledby="favoritesModalLabel">
                                         <div class="modal-dialog" role="document">
@@ -74,26 +81,41 @@
                                                     <h4 class="modal-title" id="favoritesModalLabel">Düzeltme</h4>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <form action="{{ url('usr/duzelt/'.$usr->id)}}" method="POST" >
+                                                    <form action="{{ url('etkndrs/duzelt/'.$drs->id)}}" method="POST" >
                                                         {{ csrf_field() }}
-                                                        <!-- usr adı -->
+                                                        <!-- drs adı -->
                                                         <div class="form-group">
-                                                            <label for="usr-adsoyad" class="col-sm-3 control-label">Ad/Soyadsoyad</label>
-                                                                <input type="text" name="adsoyad" id="usr-adsoyad" class="form-control" value="@if(count(@$usr)>0){{$usr->adsoyad}}@else{{old('adsoyad')}}@endif">
+                                                            <label for="drs-ad" class="col-sm-3 control-label">Ders Adı</label>
+                                                                <input type="text" name="ad" id="drs-ad" class="form-control" readonly="true" value="@if(count(@$drs)>0){{$drs->ad}}@else{{old('ad')}}@endif">
                                                         </div>
                                                         <div class="form-group">
-                                                            <label for="usr-kartno" class="col-sm-3 control-label">Kart No</label>
-                                                                <input type="text" name="kartno" id="usr-kartno" class="form-control" value="@if(count(@$usr)>0){{$usr->kartno}}@else{{old('kartno')}}@endif">
+                                                            <label for="drs-yer" class="col-sm-3 control-label">Ders Yeri</label>
+                                                                <input type="text" name="yer" id="drs-yer" class="form-control" readonly="true" value="@if(count(@$drs)>0){{$drs->yer}}@else{{old('yer')}}@endif">
                                                         </div>
                                                         <div class="form-group">
-                                                            <label for="usr-email" class="col-sm-3 control-label">E-Mail</label>
-                                                                <input type="text" name="email" id="usr-email" class="form-control" value="@if(count(@$usr)>0){{$usr->email}}@else{{old('email')}}@endif">
+                                                            <label for="drs-tarih" class="col-sm-3 control-label">Ders Tarih</label>
+                                                                <input type="text" name="tarih" id="drs-tarih" class="form-control" value="@if(count(@$drs)>0){{$drs->tarih}}@else{{old('tarih')}}@endif">
+                                                        </div>
+                                                       
+                                                        <div class="form-group">
+                                                            <label for="drs-baslama" class="col-sm-3 control-label">Başlama Saati</label>
+                                                                <input type="text" name="baslama" id="drs-baslama" class="form-control" value="@if(count(@$drs)>0){{$drs->baslama}}@else{{old('baslama')}}@endif">
                                                         </div>
                                                         <div class="form-group">
-                                                        <label for="email" class="col-md-4 control-label">Kayıt Tipi</label>
-                                                            <select class="form-control" id="sel1" name="tip" value="{{$usr->tip}}">
-                                                            <option value="2" <?php if ($usr->tip=='2') echo "selected"?>>Akademik Personel</option>
-                                                            <option value="3" <?php if ($usr->tip=='3') echo "selected"?>>İdari Personel</option>
+                                                            <label for="drs-bitis" class="col-sm-3 control-label">Bitiş Saati</label>
+                                                                <input type="text" name="bitis" id="drs-bitis" class="form-control" value="@if(count(@$drs)>0){{$drs->bitis}}@else{{old('bitis')}}@endif">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="drs-etkinlikte_ne_kadar_kalinmali" class="col-sm-3 control-label">Minimum Süre</label>
+                                                                <input type="text" name="etkinlikte_ne_kadar_kalinmali" id="drs-etkinlikte_ne_kadar_kalinmali" class="form-control" value="@if(count(@$drs)>0){{$drs->etkinlikte_ne_kadar_kalinmali}}@else{{old('etkinlikte_ne_kadar_kalinmali')}}@endif">
+                                                        </div>
+                                                        <div class="form-group">
+                                                        <label for="email" class="col-md-4 control-label">Sınıf</label>
+                                                            <select class="form-control" id="sel1" name="sube" value="{{ old('sube') }}">
+                                                            <option value="1">1</option>
+                                                            <option value="2">2</option>
+                                                            <option value="3">3</option>
+                                                            <option value="4">4</option>
                                                             </select>
                                                         </div>
                                                         <!-- ekle Button -->
@@ -113,7 +135,7 @@
                                         </div>
                                     </div>
                                     <!-- Sil Modal -->
-                                    <div class="modal fade" id="silModal{{$usr->id}}" 
+                                    <div class="modal fade" id="silModal{{$drs->id}}" 
                                          tabindex="-1" role="dialog" 
                                          aria-labelledby="favoritesModalLabel">
                                         <div class="modal-dialog" role="document">
@@ -126,10 +148,10 @@
                                                     <h4 class="modal-title" id="favoritesModalLabel">Sil</h4>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <form action="{{ url('usr/sil/'.$usr->id) }}" method="POST" >
+                                                    <form action="{{ url('etkndrs/sil/'.$drs->id) }}" method="POST" >
                                                         {{ csrf_field() }}
                                                         <input type="hidden" name="_method" value="DELETE">
-                                                        <!-- usr adı -->
+                                                        <!-- etkn adı -->
                                                         <div class="form-group">
                                                             <label >Silmek İstediğinizden Emin misiniz?</label>
                                                         </div>
@@ -157,7 +179,7 @@
                         @else <br><br><div> <div class="alert alert-info" href="#">Gösterilecek Kayıt Bulunamadı. </div></div>
                         @endif
                         </div>
-                    <center><?php echo $users->render(); ?></center>
+                    <center><?php echo $ders->render(); ?></center>
                 </div>
             </div>
             </div>

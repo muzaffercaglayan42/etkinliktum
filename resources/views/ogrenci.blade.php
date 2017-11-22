@@ -4,9 +4,9 @@
 @extends('layouts.app')
         <div class="col-md-10">
             <div class="panel panel-default">
-                <div class="panel-heading">Yeni Kayıt</div>
+                <div class="panel-heading">Yeni Öğrenci Kaydı</div>
                 <div class="panel-body">
-                    <form class="form-horizontal" role="form" method="POST" action="{{ url('/usr') }}">
+                    <form class="form-horizontal" role="form" method="POST" action="{{ url('/ogr') }}">
                         {{ csrf_field() }}
 
                         <div class="form-group{{ $errors->has('adsoyad') ? ' has-error' : '' }}">
@@ -65,15 +65,28 @@
                             </div>
                         </div>
                         <div class="form-group">
-                        <label for="email" class="col-md-4 control-label">Kayıt Tipi</label>
+                        <label for="sinif" class="col-md-4 control-label" title="Okuduğu Sınıf">Sınıf</label>
                         <div class="col-md-6">
-                            <select class="form-control col-md-4" id="sel1" name="tip" value="{{ old('tip') }}">
-                            <option value="2">Akademik Personel</option>
-                            <option value="3">İdari Personel</option>
+                            <select class="form-control col-md-4" id="sel1" name="sinif" value="{{ old('sinif') }}">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
                             </select>
                         </div>
                         </div>
+                        <div class="form-group">
+                        <label for="sube" class="col-md-4 control-label" title="Okuduğu Şube">Şube</label>
+                        <div class="col-md-6">
+                            <select class="form-control col-md-4" id="sel1" name="sube" value="{{ old('sube') }}">
+                            <option value="1">A</option>
+                            <option value="2">B</option>
+                            <option value="3">C</option>
+                            <option value="4">D</option>
+                            </select>
                         </div>
+                        </div>
+
                         <div class="form-group">
                             <div class="col-md-6 col-md-offset-4">
                                 <button type="submit" class="btn btn-primary">

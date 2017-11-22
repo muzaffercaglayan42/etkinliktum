@@ -6,7 +6,7 @@
                     <div class="panel-heading">
                         Kullanıcılar
                          <div class="pull-right">    
-                            <form class="navbar-form navbar-left"  action="{{ url('/userlistele')}}" method="POST"  role="search">
+                            <form class="navbar-form navbar-left"  action="{{ url('/ogrencilistele')}}" method="POST"  role="search">
                              {{ csrf_field() }}
                                 <div class="form-group">
                                     <input type="text" class="form-control" name="search" placeholder="Ara">
@@ -23,7 +23,6 @@
                                     <th>Kart No</th>
                                     <th>E-Mail</th>
                                     <th>Kullanıcı Tipi</th>
-                                    <th>&nbsp;</th>
                                 </thead>
                                 <tbody>
                                     @foreach ($users as $usr)
@@ -34,7 +33,7 @@
                                             <td class="table-text">@if($usr->tip==1)<div>  Öğrenci</div>  @elseif($usr->tip==2)<div>  Akademik Personel</div>  @elseif($usr->tip==3)<div>İdari Personel</div> @endif</td>
                                             <!-- Düzelt -->
                                             <td>
-                                                <form action="{{ url('usr/duzelt/'.$usr->id) }}" method="POST">
+                                                <form action="{{ url('ogr/duzelt/'.$usr->id) }}" method="POST">
                                                     {{ csrf_field() }}
                                                     <button 
                                                        type="button" 
@@ -47,7 +46,7 @@
                                             </td>
                                             <!-- Sil -->
                                              <td>
-                                                <form action="{{ url('usr/sil/'.$usr->id) }}" method="POST">
+                                                <form action="{{ url('ogr/sil/'.$usr->id) }}" method="POST">
                                                     {{ csrf_field() }}
                                                     <input type="hidden" name="_method" value="DELETE">
                                                     <button 
@@ -74,7 +73,7 @@
                                                     <h4 class="modal-title" id="favoritesModalLabel">Düzeltme</h4>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <form action="{{ url('usr/duzelt/'.$usr->id)}}" method="POST" >
+                                                    <form action="{{ url('ogr/duzelt/'.$usr->id)}}" method="POST" >
                                                         {{ csrf_field() }}
                                                         <!-- usr adı -->
                                                         <div class="form-group">
@@ -90,10 +89,21 @@
                                                                 <input type="text" name="email" id="usr-email" class="form-control" value="@if(count(@$usr)>0){{$usr->email}}@else{{old('email')}}@endif">
                                                         </div>
                                                         <div class="form-group">
-                                                        <label for="email" class="col-md-4 control-label">Kayıt Tipi</label>
-                                                            <select class="form-control" id="sel1" name="tip" value="{{$usr->tip}}">
-                                                            <option value="2" <?php if ($usr->tip=='2') echo "selected"?>>Akademik Personel</option>
-                                                            <option value="3" <?php if ($usr->tip=='3') echo "selected"?>>İdari Personel</option>
+                                                        <label for="email" class="col-md-4 control-label">Sınıf</label>
+                                                            <select class="form-control" id="sel1" name="sinif" value="{{ old('sinif') }}">
+                                                            <option value="1" <?php if ($usr->sinif=='1') echo "selected"?>>1</option>
+                                                            <option value="2" <?php if ($usr->sinif=='2') echo "selected"?>>2</option>
+                                                            <option value="3" <?php if ($usr->sinif=='3') echo "selected"?>>3</option>
+                                                            <option value="4" <?php if ($usr->sinif=='4') echo "selected"?>>4</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="form-group">
+                                                        <label for="email" class="col-md-4 control-label">Şube</label>
+                                                            <select class="form-control" id="sel1" name="sube" value="{{ old('sube') }}">
+                                                            <option value="A" <?php if ($usr->sube=='A') echo "selected"?>>A</option>
+                                                            <option value="B" <?php if ($usr->sube=='B') echo "selected"?>>B</option>
+                                                            <option value="C" <?php if ($usr->sube=='C') echo "selected"?>>C</option>
+                                                            <option value="D" <?php if ($usr->sube=='D') echo "selected"?>>D</option>
                                                             </select>
                                                         </div>
                                                         <!-- ekle Button -->
@@ -126,7 +136,7 @@
                                                     <h4 class="modal-title" id="favoritesModalLabel">Sil</h4>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <form action="{{ url('usr/sil/'.$usr->id) }}" method="POST" >
+                                                    <form action="{{ url('ogr/sil/'.$usr->id) }}" method="POST" >
                                                         {{ csrf_field() }}
                                                         <input type="hidden" name="_method" value="DELETE">
                                                         <!-- usr adı -->
